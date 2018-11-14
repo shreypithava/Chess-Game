@@ -3,16 +3,16 @@ from PIL import ImageTk, Image
 
 class Images:
     def __init__(self):
-        self.images_let = ['p', 'h', 'b', 'r', 'q', 'k']
+        self.images_let = ['pawn', 'knight', 'bishop', 'rook', 'rook_&_bishop', 'king']
         self.images_list = []
+        self.__open_images()
 
-    def open_images(self):
+    def __open_images(self):
         for letter in self.images_let:
-            for i in range(2):
-                if i == 0:
-                    self.images_list.append((ImageTk.PhotoImage(Image.open(letter + str(i + 1) + '.png')), 'black'))
-                else:
-                    self.images_list.append((ImageTk.PhotoImage(Image.open(letter + str(i + 1) + '.png')), 'white'))
-        self.images_list.append((ImageTk.PhotoImage(Image.open('g.png')), 'blank'))
-        self.images_list.append((ImageTk.PhotoImage(Image.open('w.png')), 'blank'))
+            self.images_list.append((ImageTk.PhotoImage(Image.open(letter + '1.png')), 'black', letter))
+            self.images_list.append((ImageTk.PhotoImage(Image.open(letter + '2.png')), 'white', letter))
+        self.images_list.append((ImageTk.PhotoImage(Image.open('grey.png')), 'empty', ''))
+        self.images_list.append((ImageTk.PhotoImage(Image.open('white.png')), 'empty', ''))
+
+    def return_images(self):
         return self.images_list
