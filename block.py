@@ -8,8 +8,11 @@ a = 5
 
 class Block:
     def __init__(self, window, color, i):
-        self.__time = None
-        self.temp = None
+        self.__time = self.temp = self.images = self.images_list = self.image = self.frame = self.position = \
+            self.label = None
+        self.__rest_of_init(window, color, i)
+
+    def __rest_of_init(self, window, color, i):
         self.images = im.Images()
         self.images_list = self.images.return_images()
         self.image = rm.choice(self.images_list)
@@ -20,13 +23,7 @@ class Block:
                       self.image[2]]
         self.label[0].grid()
         self.label[0].bind("<1>", self.__click)
-        self.__reset()
-
-    def __reset(self):
-        if self.frame['bg'] == 'grey':
-            self.help_setup(12)
-        else:
-            self.help_setup(13)
+        self.empty_position()
 
     def setup(self):
         if self.position == 'a8' or self.position == 'h8':
