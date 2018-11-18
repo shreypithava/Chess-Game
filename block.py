@@ -26,29 +26,29 @@ class Block:
         self.empty_position()
 
     def setup(self):
-        if self.position == 'a8' or self.position == 'h8':
+        if self.position == 'a8' or self.position == 'h8':  # black rook
             self.help_setup(6)
-        elif self.position == 'b8' or self.position == 'g8':
+        elif self.position == 'b8' or self.position == 'g8':  # black knight
             self.help_setup(2)
-        elif self.position == 'c8' or self.position == 'f8':
+        elif self.position == 'c8' or self.position == 'f8':  # black bishop
             self.help_setup(4)
-        elif self.position == 'a1' or self.position == 'h1':
+        elif self.position == 'a1' or self.position == 'h1':  # white rook
             self.help_setup(7)
-        elif self.position == 'b1' or self.position == 'g1':
+        elif self.position == 'b1' or self.position == 'g1':  # white knight
             self.help_setup(3)
-        elif self.position == 'c1' or self.position == 'f1':
+        elif self.position == 'c1' or self.position == 'f1':  # white bishop
             self.help_setup(5)
-        elif self.position == 'd8':
+        elif self.position == 'd8':  # black queen
             self.help_setup(8)
-        elif self.position == 'd1':
+        elif self.position == 'd1':  # white queen
             self.help_setup(9)
-        elif self.position == 'e8':
+        elif self.position == 'e8':  # black king
             self.help_setup(10)
-        elif self.position == 'e1':
+        elif self.position == 'e1':  # white king
             self.help_setup(11)
-        elif '7' in self.position:
+        elif '7' in self.position:  # black pawns
             self.help_setup(0)
-        elif '2' in self.position:
+        elif '2' in self.position:  # white pawns
             self.help_setup(1)
 
     def help_setup(self, num):

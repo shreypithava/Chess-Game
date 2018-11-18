@@ -3,7 +3,7 @@ from PIL import ImageTk, Image
 
 class Images:
     def __init__(self):
-        self.images_let = ['pawn', 'knight', 'bishop', 'rook', 'rook_&_bishop', 'king']
+        self.images_let = ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king']
         self.images_list = []
         self.__open_images()
 
