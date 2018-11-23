@@ -1,6 +1,6 @@
-import tkinter as tk
-import images as im
-import random as rm
+from images import Images
+from random import choice
+from tkinter import Frame, Label
 import time
 
 a = 5
@@ -13,13 +13,13 @@ class Block:
         self.__rest_of_init(window, color, i)
 
     def __rest_of_init(self, window, color, i):
-        self.images = im.Images()
+        self.images = Images()
         self.images_list = self.images.return_images()
-        self.image = rm.choice(self.images_list)
-        self.frame = tk.Frame(window, height=a, width=a, bg=color)
+        self.image = choice(self.images_list)
+        self.frame = Frame(window, height=a, width=a, bg=color)
         self.frame.grid(row=i // 8, column=i % 8)
         self.position = '{}{}'.format(chr(97 + (i % 8)), 8 - i // 8)
-        self.label = [tk.Label(self.frame, image=self.image[0], height=50, width=50, bg=color), self.image[1],
+        self.label = [Label(self.frame, image=self.image[0], height=50, width=50, bg=color), self.image[1],
                       self.image[2]]
         self.label[0].grid()
         self.label[0].bind("<1>", self.__click)
@@ -73,3 +73,6 @@ class Block:
 
     def reset_time(self):
         self.__time = None
+
+    def print_content(self):
+        print('{} {}'.format(self.label[1], self.label[2]))
