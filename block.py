@@ -60,7 +60,7 @@ class Block:
     def __click(self, event=None):
         if event:
             pass
-        self.__time = time.time()
+        self.set_time()
 
     def return_time(self):
         return self.__time
@@ -76,3 +76,6 @@ class Block:
 
     def print_content(self):
         print('{} {}'.format(self.label[1], self.label[2]))
+
+    def set_time(self):
+        self.__time = time.time()
