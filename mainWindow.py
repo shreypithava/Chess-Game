@@ -21,21 +21,33 @@ class Window:
         self.__check_blocks = []
         self.__move_list = []
         self.__checkmate_checker_var = False
+        self.__white_castle = True
+        self.__black_castle = True
         self.__rest_of_init()
 
     def __checkmate_checker(self):
         for id1 in range(len(self.__blocks)):
             if self.__blocks[id1].label[1] == self.__turn_color:
                 if self.__blocks[id1].label[2] == 'king':
+                    pos = self.__move_checker(self.__blocks[id1])
+                    if self.__turn_color == 'white':
+                        for p in self.__black_all_positions:
+                            if p in pos:
+                                pos.remove(p)
+                        if len(pos) > 0:
+                            return False
+                    elif self.__turn_color == 'black':
+                        for p in self.__white_all_positions:
+                            if p in pos:
+                                pos.remove(p)
+                        if len(pos) > 0:
+                            return False
                     continue
-                self.__blocks[id1].print_content()
                 pos = self.__move_checker(self.__blocks[id1])
-                print(pos)
                 for p in pos:
                     for id2 in range(len(self.__blocks)):
                         if p == self.__blocks[id2].position:
                             if self.__move_made(True, id1, id2):
-                                print('Move Found')
                                 self.__previous_move()
                                 self.__checkmate_checker_var = False
                                 return False
@@ -48,6 +60,16 @@ class Window:
         else:
             temp = self.__move()
         if temp[0] or next_move:
+            if (temp[1][0].position == 'c1' and temp[1][1].position == 'e1' and temp[1][1].label[2] == 'king' and
+                self.__blocks[56].label[2] == 'rook') or (
+                    temp[1][1].position == 'e1' or temp[1][1].position == 'g1' and temp[1][0].label[2] == 'king' and
+                    self.__blocks[63].label[2] == 'rook'):
+                return self.__castling(temp[1], 'white')
+            elif (temp[1][0].position == 'c8' and temp[1][1].position == 'e8' and temp[1][1].label[2] == 'king' and
+                  self.__blocks[0].label[2] == 'rook') or (
+                    temp[1][1].position == 'e8' or temp[1][1].position == 'g8' and temp[1][0].label[2] == 'king' and
+                    self.__blocks[7].label[2] == 'rook'):
+                return self.__castling(temp[1], 'black')
             if self.__black_checked:
                 self.__make_move(temp[1], check_checker=next_move)
                 if self.__black_checked:
@@ -67,6 +89,61 @@ class Window:
             return True
         return False
 
+    def __castling(self, blocks, turn):
+        if turn == 'white' == self.__turn_color:
+            if self.__white_castle and not self.__white_checked:
+                if blocks[0].label[2] == 'king':
+                    self.__king_position[1] = 'g1'
+                    self.__white_castle = False
+                    blocks[1].help_setup(blocks[0].temp)
+                    blocks[0].empty_position()
+                    self.__blocks[61].help_setup(self.__blocks[63].temp)
+                    self.__blocks[63].empty_position()
+                    self.__change_turn_label()
+                    self.__store_all_moves()
+                    for block in self.__blocks:
+                        block.reset_time()
+                    return True
+                elif blocks[1].label[2] == 'king':
+                    self.__king_position[1] = 'c1'
+                    self.__white_castle = False
+                    blocks[0].help_setup(blocks[1].temp)
+                    blocks[1].empty_position()
+                    self.__blocks[59].help_setup(self.__blocks[56].temp)
+                    self.__blocks[56].empty_position()
+                    self.__change_turn_label()
+                    self.__store_all_moves()
+                    for block in self.__blocks:
+                        block.reset_time()
+                    return True
+        elif turn == 'black' == self.__turn_color:
+            if self.__black_castle and not self.__black_checked:
+                if blocks[0].label[2] == 'king':
+                    self.__king_position[0] = 'g8'
+                    self.__black_castle = False
+                    blocks[1].help_setup(blocks[0].temp)
+                    blocks[0].empty_position()
+                    self.__blocks[5].help_setup(self.__blocks[7].temp)
+                    self.__blocks[7].empty_position()
+                    self.__change_turn_label()
+                    self.__store_all_moves()
+                    for block in self.__blocks:
+                        block.reset_time()
+                    return True
+                elif blocks[1].label[2] == 'king':
+                    self.__king_position[0] = 'c8'
+                    self.__black_castle = False
+                    blocks[0].help_setup(blocks[1].temp)
+                    blocks[1].empty_position()
+                    self.__blocks[3].help_setup(self.__blocks[0].temp)
+                    self.__blocks[0].empty_position()
+                    self.__change_turn_label()
+                    self.__store_all_moves()
+                    for block in self.__blocks:
+                        block.reset_time()
+                    return True
+        return False
+
     def __make_move(self, times, for_prev=False, check_checker=None):
         if not for_prev:
             if check_checker:
@@ -82,14 +159,15 @@ class Window:
             self.__make_move2(times[1], times[0], times[1].label[2] == 'pawn', times[2])
 
     def __make_move2(self, zero, one, pawn_prev=None, for_prev=None):
-        print(self.__king_position)
         if zero.label[1] == self.__turn_color:
             if one.position in self.__move_checker(zero, one) or pawn_prev:
                 if zero.label[2] == 'king':
                     if zero.label[1] == 'white':
                         self.__king_position[1] = one.position
+                        self.__white_castle = False
                     else:
                         self.__king_position[0] = one.position
+                        self.__black_castle = False
                 if type(for_prev) is not int:
                     self.__move_list.append([zero, one, one.temp])
                     one.help_setup(zero.temp)
@@ -111,7 +189,7 @@ class Window:
                         self.__checkmate_checker_var = True
                         if self.__checkmate_checker():
                             self.__turn_color = ''
-                            print('Game over')
+                            self.__check_label['text'] = 'Checkmate'
                     return
                 elif block.label[1] == 'black' and self.__king_position[1] in self.__move_checker(block):
                     self.__check_label['text'] = 'White Checked'
@@ -119,16 +197,15 @@ class Window:
                     if not self.__checkmate_checker_var:
                         self.__checkmate_checker_var = True
                         if self.__checkmate_checker():
-                            print('Game over')
+                            self.__turn_color = ''
+                            self.__check_label['text'] = 'Checkmate'
                     return
         self.__black_checked = self.__white_checked = False
         self.__check_label['text'] = ''
 
     def __previous_move(self):
-        # print(self.__move_list)
         temp = self.__move_list[len(self.__move_list) - 1]
         self.__move_list.remove(self.__move_list[len(self.__move_list) - 1])
-        # print(self.__move_list)
         self.__change_turn_label()
         self.__make_move(temp, for_prev=True)
 
@@ -366,8 +443,8 @@ class Window:
         self.__check_label = tk.Label(self.__master)
         self.__check_label.grid(row=11, column=0, columnspan=9)
         self.__fen_stuff.append(tk.Entry(self.__master))
-        self.__previous_button = tk.Button(self.__master, text='Previous', command=self.__previous_move)
-        self.__previous_button.grid(row=12, column=0, columnspan=9)
+        # self.__previous_button = tk.Button(self.__master, text='Previous', command=self.__previous_move)
+        # self.__previous_button.grid(row=12, column=0, columnspan=9)
         self.__fen_stuff[0].grid(row=1, column=10, columnspan=6)
         self.__fen_stuff.append(tk.Button(self.__master, text='FEN to Game'))
         self.__fen_stuff[1].grid(row=2, column=10, columnspan=3)
